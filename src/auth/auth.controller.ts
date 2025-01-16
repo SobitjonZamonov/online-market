@@ -9,6 +9,9 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() createUserDto: CreateUserDto) {
+    if (createUserDto.password !== createUserDto.confirm_password){
+      return {message: "password !== confirm_password"}
+    }
     return this.authService.register(createUserDto);
   }
 
