@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Req } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Req, Query } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Product } from './entities/product.entity';
 
 @Controller('products')
 export class ProductController {
@@ -14,8 +15,13 @@ export class ProductController {
   }
 
   @Get()
-  findAll() {
-    return this.productService.findAll();
+  async findAll(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @Query('search') search: string = '',
+  ): Promise<Product[]> {
+    const skip = (page - 1) * limit;
+    return this.productService.findAll(skip, limit, search);
   }
 
   @Get(':id')

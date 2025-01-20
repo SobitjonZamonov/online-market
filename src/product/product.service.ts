@@ -20,8 +20,16 @@ export class ProductService {
     return this.productRepository.save(product);
   }
 
-  async findAll(): Promise<Product[]> {
-    return this.productRepository.find();
+  async findAll(skip: number, limit: number, search: string): Promise<Product[]> {
+    const query = this.productRepository.createQueryBuilder('product');
+
+    if (search) {
+      query.andWhere('product.name LIKE :search', { search: `%${search}%` });
+    }
+
+    query.skip(skip).take(limit);
+
+    return await query.getMany();
   }
 
   async findOne(id: number): Promise<Product> {
